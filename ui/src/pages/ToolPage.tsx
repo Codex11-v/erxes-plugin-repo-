@@ -4,11 +4,12 @@ import { Link } from "react-router";
 import {
   Badge,
   Button,
+  Calendar,
   Card,
   Checkbox,
-  DatePicker,
   Input,
   Label,
+  Popover,
   Select,
   Table,
   Textarea,
@@ -16,6 +17,7 @@ import {
 import type { ButtonProps } from "erxes-ui";
 import {
   IconArrowLeft,
+  IconCalendar,
   IconMicrophone,
   IconPlayerStop,
   IconSparkles,
@@ -72,6 +74,53 @@ function dateValue(date: Date): string {
   const month = String(date.getMonth() + 1).padStart(2, "0");
   const day = String(date.getDate()).padStart(2, "0");
   return `${year}-${month}-${day}`;
+}
+
+function TeacherDateField({
+  value,
+  onChange,
+}: {
+  value: string;
+  onChange: (value: string) => void;
+}) {
+  const [open, setOpen] = useState(false);
+  const selected = value ? new Date(`${value}T12:00:00`) : undefined;
+  const display = selected
+    ? new Intl.DateTimeFormat("mn-MN", {
+        timeZone: "Asia/Ulaanbaatar",
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+      }).format(selected)
+    : "Огноо сонгох";
+
+  return (
+    <Popover open={open} onOpenChange={setOpen}>
+      <Popover.Trigger asChild>
+        <Button
+          type="button"
+          variant="outline"
+          aria-label="Огноо сонгох"
+          aria-haspopup="dialog"
+          className="edusmart:flex edusmart:w-full edusmart:items-center edusmart:justify-between edusmart:rounded-lg edusmart:border edusmart:border-border edusmart:bg-background edusmart:px-3 edusmart:py-3 edusmart:text-sm edusmart:font-normal"
+        >
+          {display}
+          <IconCalendar size={16} />
+        </Button>
+      </Popover.Trigger>
+      <Popover.Content align="start" className="edusmart:w-auto edusmart:p-0">
+        <Calendar
+          mode="single"
+          captionLayout="dropdown"
+          selected={selected}
+          onSelect={(date) => {
+            if (date) onChange(dateValue(date));
+            setOpen(false);
+          }}
+        />
+      </Popover.Content>
+    </Popover>
+  );
 }
 
 export function ToolPage({ kind }: { kind: Tool }) {
@@ -298,16 +347,10 @@ export function ToolPage({ kind }: { kind: Tool }) {
                   onChange={(event) => setTeacher(event.target.value)}
                 />
               </Field>
-              <Field label="Огноо">
-                <DatePicker
-                  className="edusmart:w-full"
-                  value={date}
-                  displayFormat="YYYY.MM.DD"
-                  placeholder="Огноо сонгох"
-                  clearable={false}
-                  onChange={(value) => setDate(value instanceof Date ? dateValue(value) : "")}
-                />
-              </Field>
+              <div className="edusmart:flex edusmart:flex-col edusmart:gap-2 edusmart:text-sm">
+                <span className="edusmart:font-medium">Огноо</span>
+                <TeacherDateField value={date} onChange={setDate} />
+              </div>
               <Field label="Анги">
                 <Input
                   className={field}
