@@ -18,6 +18,7 @@ import type { ButtonProps } from "erxes-ui";
 import {
   IconArrowLeft,
   IconCalendar,
+  IconCamera,
   IconMicrophone,
   IconPlayerStop,
   IconSparkles,
@@ -148,13 +149,37 @@ export function ToolPage({ kind }: { kind: Tool }) {
   const [error, setError] = useState("");
   const [notice, setNotice] = useState("");
   const [busy, setBusy] = useState(false);
+  const [cameraOpen, setCameraOpen] = useState(false);
   const [presenting, setPresenting] = useState(false);
   const slidesDialog = useRef<HTMLDialogElement>(null);
+  const cameraDialog = useRef<HTMLDialogElement>(null);
+  const cameraVideo = useRef<HTMLVideoElement>(null);
+  const cameraStream = useRef<MediaStream | null>(null);
   useEffect(() => {
     const dialog = slidesDialog.current;
     if (presenting) dialog?.showModal();
     return () => dialog?.close();
   }, [presenting]);
+  useEffect(() => {
+    const dialog = cameraDialog.current;
+    if (cameraOpen) {
+      dialog?.showModal();
+      if (cameraVideo.current && cameraStream.current) {
+        cameraVideo.current.srcObject = cameraStream.current;
+        void cameraVideo.current.play().catch(() => {
+          setError("Камерын дүрсийг эхлүүлж чадсангүй.");
+        });
+      }
+    } else {
+      dialog?.close();
+    }
+  }, [cameraOpen]);
+  useEffect(
+    () => () => {
+      cameraStream.current?.getTracks().forEach((track) => track.stop());
+    },
+    [],
+  );
   const [slideIndex, setSlideIndex] = useState(0);
   const [offset, setOffset] = useState(0);
   const [generate] = useMutation(GENERATE_MUTATION);
@@ -174,11 +199,66 @@ export function ToolPage({ kind }: { kind: Tool }) {
     setFile(recorded);
     setNotice("Бичлэг бэлэн. «Текст болгох» дээр дарж танилтыг хянана уу.");
   }, setError);
+  const startCamera = async () => {
+    setError("");
+    try {
+      if (!navigator.mediaDevices?.getUserMedia) {
+        throw new Error("Энэ хөтөч камераар зураг авахыг дэмжихгүй байна.");
+      }
+      cameraStream.current = await navigator.mediaDevices.getUserMedia({
+        video: { facingMode: { ideal: "environment" } },
+        audio: false,
+      });
+      setCameraOpen(true);
+    } catch (cause) {
+      setError(
+        cause instanceof Error
+          ? `Камер нээж чадсангүй: ${cause.message}`
+          : "Камер нээж чадсангүй. Камерын зөвшөөрлөө шалгана уу.",
+      );
+    }
+  };
+  const closeCamera = () => {
+    cameraStream.current?.getTracks().forEach((track) => track.stop());
+    cameraStream.current = null;
+    setCameraOpen(false);
+  };
+  const capturePhoto = async () => {
+    const video = cameraVideo.current;
+    if (!video?.videoWidth || !video.videoHeight) {
+      setError("Камерын дүрс хараахан бэлэн болоогүй байна.");
+      return;
+    }
+    const canvas = document.createElement("canvas");
+    const scale = Math.min(1, 1920 / Math.max(video.videoWidth, video.videoHeight));
+    canvas.width = Math.round(video.videoWidth * scale);
+    canvas.height = Math.round(video.videoHeight * scale);
+    const context = canvas.getContext("2d");
+    if (!context) {
+      setError("Зургийг бэлтгэж чадсангүй.");
+      return;
+    }
+    context.drawImage(video, 0, 0, canvas.width, canvas.height);
+    const blob = await new Promise<Blob | null>((resolve) =>
+      canvas.toBlob(resolve, "image/jpeg", 0.82),
+    );
+    if (!blob) {
+      setError("Зургийг хадгалж чадсангүй. Дахин оролдоно уу.");
+      return;
+    }
+    setFile(new File([blob], `journal-${Date.now()}.jpg`, { type: "image/jpeg" }));
+    setError("");
+    setNotice("Зураг авлаа. «Зураг таних» дээр дарж үргэлжлүүлнэ үү.");
+    closeCamera();
+  };
   const run = async (transcribe = false) => {
     setBusy(true);
     setError("");
     setNotice("");
     try {
+      if ((kind === "voice" || kind === "lessons") && !consent) {
+        throw new Error("AI-д илгээхийн өмнө зөвшөөрлөө тэмдэглэнэ үү.");
+      }
       const media = transcribe || kind === "ocr";
       if (media && !file) throw new Error("Эхлээд файл оруулна уу.");
       const result = await generate({
@@ -284,7 +364,7 @@ export function ToolPage({ kind }: { kind: Tool }) {
             <>
               <ActionButton
                 className={button}
-                disabled={busy || recording.starting || !consent}
+                disabled={busy || recording.starting}
                 onClick={() => (recording.recording ? recording.stop() : void recording.start())}
               >
                 {recording.recording ? <IconPlayerStop size={18} /> : <IconMicrophone size={18} />}
@@ -299,6 +379,15 @@ export function ToolPage({ kind }: { kind: Tool }) {
           )}
           {kind !== "lessons" && (
             <>
+              {kind === "ocr" && (
+                <ActionButton
+                  className="edusmart:w-full"
+                  disabled={busy}
+                  onClick={() => void startCamera()}
+                >
+                  <IconCamera size={18} /> Камераар зураг авах
+                </ActionButton>
+              )}
               <Field
                 label={
                   kind === "ocr"
@@ -315,6 +404,7 @@ export function ToolPage({ kind }: { kind: Tool }) {
                       ? "image/png,image/jpeg,image/webp"
                       : "audio/webm,audio/mp4,audio/mpeg,audio/ogg,audio/wav"
                   }
+                  capture={kind === "ocr" ? "environment" : undefined}
                   onChange={(event) => {
                     setFile(event.target.files?.[0] ?? null);
                     setError("");
@@ -765,6 +855,32 @@ export function ToolPage({ kind }: { kind: Tool }) {
             >
               Дараах →
             </ActionButton>
+          </div>
+        </dialog>
+      )}
+      {cameraOpen && (
+        <dialog
+          ref={cameraDialog}
+          onCancel={(event) => {
+            event.preventDefault();
+            closeCamera();
+          }}
+          aria-label="Журналын зураг авах"
+          className="edusmart:fixed edusmart:inset-0 edusmart:m-0 edusmart:flex edusmart:h-screen edusmart:max-h-none edusmart:w-screen edusmart:max-w-none edusmart:flex-col edusmart:items-center edusmart:justify-center edusmart:gap-4 edusmart:border-0 edusmart:bg-background edusmart:p-6 edusmart:text-foreground"
+        >
+          <video
+            ref={cameraVideo}
+            autoPlay
+            playsInline
+            muted
+            aria-label="Камерын дүрс"
+            className="edusmart:max-h-[75vh] edusmart:w-full edusmart:max-w-4xl edusmart:rounded-xl edusmart:bg-black edusmart:object-contain"
+          />
+          <div className="edusmart:flex edusmart:gap-3">
+            <ActionButton variant="default" onClick={() => void capturePhoto()}>
+              <IconCamera size={18} /> Зураг авах
+            </ActionButton>
+            <ActionButton onClick={closeCamera}>Болих</ActionButton>
           </div>
         </dialog>
       )}
