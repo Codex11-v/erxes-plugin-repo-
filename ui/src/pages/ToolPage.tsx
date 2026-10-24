@@ -1,6 +1,8 @@
 import { useMutation, useQuery } from "@apollo/client";
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import { Link } from "react-router";
+import { Badge, Button, Card, Checkbox, Input, Label, Select, Table, Textarea } from "erxes-ui";
+import type { ButtonProps } from "erxes-ui";
 import {
   IconArrowLeft,
   IconMicrophone,
@@ -42,11 +44,16 @@ const button =
   "edusmart:inline-flex edusmart:items-center edusmart:justify-center edusmart:gap-2 edusmart:rounded-lg edusmart:border edusmart:border-border edusmart:px-4 edusmart:py-2 edusmart:text-sm edusmart:transition edusmart:hover:bg-accent edusmart:disabled:opacity-50";
 function Field({ label, children }: { label: string; children: ReactNode }) {
   return (
-    <label className="edusmart:flex edusmart:flex-col edusmart:gap-2 edusmart:text-sm">
+    <Label className="edusmart:flex edusmart:flex-col edusmart:gap-2 edusmart:text-sm">
       <span className="edusmart:font-medium">{label}</span>
       {children}
-    </label>
+    </Label>
   );
+}
+
+function ActionButton({ className = "", variant = "outline", ...props }: ButtonProps) {
+  const classes = [...new Set(`${button} ${className}`.split(/\s+/).filter(Boolean))].join(" ");
+  return <Button className={classes} variant={variant} {...props} />;
 }
 
 export function ToolPage({ kind }: { kind: Tool }) {
@@ -198,8 +205,9 @@ export function ToolPage({ kind }: { kind: Tool }) {
       <h1 className="edusmart:mt-5 edusmart:text-2xl edusmart:font-semibold">{meta.title}</h1>
       <p className="edusmart:mb-8 edusmart:mt-3 edusmart:text-muted-foreground">{meta.sub}</p>
       <div className="edusmart:grid edusmart:items-start edusmart:gap-6 edusmart:lg:grid-cols-2">
-        <section
+        <Card
           className={`${panel} edusmart:flex edusmart:flex-col edusmart:gap-5`}
+          role="region"
           aria-label="Оруулах мэдээлэл"
         >
           <span className="edusmart:text-xs edusmart:tracking-widest edusmart:text-muted-foreground">
@@ -207,7 +215,7 @@ export function ToolPage({ kind }: { kind: Tool }) {
           </span>
           {kind === "voice" && (
             <>
-              <button
+              <ActionButton
                 className={button}
                 disabled={busy || recording.starting || !consent}
                 onClick={() => (recording.recording ? recording.stop() : void recording.start())}
@@ -218,7 +226,7 @@ export function ToolPage({ kind }: { kind: Tool }) {
                   : recording.starting
                     ? "Микрофон холбож байна…"
                     : "Ярьж тэмдэглэх (2 минут хүртэл)"}
-              </button>
+              </ActionButton>
               {recording.recording && <p role="status">Бичлэг хийж байна…</p>}
             </>
           )}
@@ -231,7 +239,7 @@ export function ToolPage({ kind }: { kind: Tool }) {
                     : "Дууны файл (WebM, MP4, MP3, OGG, WAV · 4 MB хүртэл)"
                 }
               >
-                <input
+                <Input
                   className={field}
                   type="file"
                   disabled={busy || recording.recording}
@@ -252,20 +260,20 @@ export function ToolPage({ kind }: { kind: Tool }) {
                 </p>
               )}
               {kind === "voice" && (
-                <button
+                <ActionButton
                   className={button}
                   disabled={!file || busy || recording.recording || !consent}
                   onClick={() => void run(true)}
                 >
                   Текст болгох
-                </button>
+                </ActionButton>
               )}
             </>
           )}
           {kind === "voice" && (
             <div className="edusmart:grid edusmart:grid-cols-2 edusmart:gap-4">
               <Field label="Багшийн нэр">
-                <input
+                <Input
                   className={field}
                   maxLength={120}
                   value={teacher}
@@ -273,7 +281,7 @@ export function ToolPage({ kind }: { kind: Tool }) {
                 />
               </Field>
               <Field label="Огноо">
-                <input
+                <Input
                   className={field}
                   type="date"
                   value={date}
@@ -281,7 +289,7 @@ export function ToolPage({ kind }: { kind: Tool }) {
                 />
               </Field>
               <Field label="Анги">
-                <input
+                <Input
                   className={field}
                   maxLength={80}
                   value={className}
@@ -289,7 +297,7 @@ export function ToolPage({ kind }: { kind: Tool }) {
                 />
               </Field>
               <Field label="Хичээл">
-                <input
+                <Input
                   className={field}
                   maxLength={120}
                   value={subject}
@@ -301,18 +309,21 @@ export function ToolPage({ kind }: { kind: Tool }) {
           {kind === "lessons" && (
             <div className="edusmart:grid edusmart:grid-cols-2 edusmart:gap-4">
               <Field label="Анги">
-                <select
-                  className={field}
-                  value={grade}
-                  onChange={(event) => setGrade(event.target.value)}
-                >
-                  {Array.from({ length: 12 }, (_, index) => (
-                    <option key={index + 1}>{index + 1}</option>
-                  ))}
-                </select>
+                <Select value={grade} onValueChange={setGrade}>
+                  <Select.Trigger className={field} aria-label="Анги">
+                    <Select.Value />
+                  </Select.Trigger>
+                  <Select.Content>
+                    {Array.from({ length: 12 }, (_, index) => (
+                      <Select.Item key={index + 1} value={String(index + 1)}>
+                        {index + 1}
+                      </Select.Item>
+                    ))}
+                  </Select.Content>
+                </Select>
               </Field>
               <Field label="Хугацаа (минут)">
-                <input
+                <Input
                   className={field}
                   type="number"
                   min={10}
@@ -323,7 +334,7 @@ export function ToolPage({ kind }: { kind: Tool }) {
               </Field>
               <div className="edusmart:col-span-2">
                 <Field label="Хичээл">
-                  <input
+                  <Input
                     className={field}
                     maxLength={120}
                     value={subject}
@@ -334,7 +345,7 @@ export function ToolPage({ kind }: { kind: Tool }) {
               </div>
               <div className="edusmart:col-span-2">
                 <Field label="Сэдэв">
-                  <input
+                  <Input
                     className={field}
                     maxLength={300}
                     value={topic}
@@ -345,7 +356,7 @@ export function ToolPage({ kind }: { kind: Tool }) {
               </div>
               <div className="edusmart:col-span-2">
                 <Field label="Нэмэлт заавар">
-                  <textarea
+                  <Textarea
                     className={field}
                     rows={3}
                     maxLength={4000}
@@ -359,7 +370,7 @@ export function ToolPage({ kind }: { kind: Tool }) {
           )}
           {kind === "voice" && (
             <Field label={meta.input}>
-              <textarea
+              <Textarea
                 className={field}
                 rows={10}
                 maxLength={16000}
@@ -371,18 +382,17 @@ export function ToolPage({ kind }: { kind: Tool }) {
           )}
           {(kind === "voice" || kind === "lessons") && (
             <label className="edusmart:flex edusmart:items-start edusmart:gap-2 edusmart:text-xs edusmart:text-muted-foreground">
-              <input
-                type="checkbox"
+              <Checkbox
                 checked={consent}
-                onChange={(event) => setConsent(event.target.checked)}
+                onCheckedChange={(checked) => setConsent(checked === true)}
               />
               {kind === "voice"
                 ? "Оруулсан текст, бичлэгийг AI үйлчилгээнд илгээхийг зөвшөөрч байна. Зөвшөөрөлгүй хувийн мэдээлэл оруулахгүй."
                 : "Энэ формын мэдээллийг тохируулсан AI үйлчилгээнд илгээхийг зөвшөөрч байна. Сурагчийн хувийн мэдээлэл оруулахгүй."}
             </label>
           )}
-          <button
-            className={`${button} edusmart:bg-primary edusmart:text-primary-foreground`}
+          <ActionButton
+            variant="default"
             disabled={
               busy ||
               recording.recording ||
@@ -402,20 +412,24 @@ export function ToolPage({ kind }: { kind: Tool }) {
                 : kind === "voice"
                   ? "Тайлан үүсгэх"
                   : "Төлөвлөгөө & слайд үүсгэх"}
-          </button>
+          </ActionButton>
           <p className="edusmart:text-xs edusmart:leading-relaxed edusmart:text-muted-foreground">
-            AI-д боловсруулахаар оруулсан текст, зураг, дуу Gemini үйлчилгээнд дамжина. Үр дүнг
-            ашиглахаасаа өмнө багш хянаж засна.
+            Оруулсан текст, зураг, дуу тохируулсан AI үйлчилгээнд дамжина. Үр дүнг ашиглахаасаа өмнө
+            багш хянаж засна.
           </p>
-        </section>
-        <section
+        </Card>
+        <Card
           className={`${panel} edusmart:min-w-0 edusmart:flex edusmart:flex-col edusmart:gap-5`}
+          role="region"
           aria-label="Үр дүн"
           aria-busy={busy}
         >
-          <span className="edusmart:text-xs edusmart:tracking-widest edusmart:text-muted-foreground">
-            02 / ХЯНАХ & ХАДГАЛАХ
-          </span>
+          <div className="edusmart:flex edusmart:flex-wrap edusmart:items-center edusmart:justify-between edusmart:gap-3">
+            <span className="edusmart:text-xs edusmart:tracking-widest edusmart:text-muted-foreground">
+              02 / ХЯНАХ & ХАДГАЛАХ
+            </span>
+            <Badge variant="info">AI · Багш хянана</Badge>
+          </div>
           {error && (
             <p role="alert" className="edusmart:text-destructive">
               {error}
@@ -439,7 +453,7 @@ export function ToolPage({ kind }: { kind: Tool }) {
           {content && (
             <>
               <Field label="Хадгалах гарчиг">
-                <input
+                <Input
                   className={field}
                   maxLength={200}
                   value={title}
@@ -449,36 +463,36 @@ export function ToolPage({ kind }: { kind: Tool }) {
               {kind === "ocr" ? (
                 <>
                   <div className="edusmart:overflow-auto">
-                    <table className="edusmart:w-full edusmart:text-sm">
-                      <caption className="edusmart:mb-3 edusmart:text-left">
+                    <Table className="edusmart:w-full edusmart:text-sm">
+                      <Table.Caption className="edusmart:mb-3 edusmart:text-left">
                         {rows.length} сурагч · Дундаж{" "}
                         {scored.length
                           ? (
                               scored.reduce((sum, row) => sum + (row.score ?? 0), 0) / scored.length
                             ).toFixed(1)
                           : "—"}
-                      </caption>
-                      <thead>
-                        <tr>
-                          <th scope="col">Нэр</th>
-                          <th scope="col">Оноо / 100</th>
-                          <th scope="col">Ирц</th>
-                          <th scope="col">Үйлдэл</th>
-                        </tr>
-                      </thead>
-                      <tbody>
+                      </Table.Caption>
+                      <Table.Header>
+                        <Table.Row>
+                          <Table.Head scope="col">Нэр</Table.Head>
+                          <Table.Head scope="col">Оноо / 100</Table.Head>
+                          <Table.Head scope="col">Ирц</Table.Head>
+                          <Table.Head scope="col">Үйлдэл</Table.Head>
+                        </Table.Row>
+                      </Table.Header>
+                      <Table.Body>
                         {rows.map((row, index) => (
-                          <tr key={index}>
-                            <td>
-                              <input
+                          <Table.Row key={index}>
+                            <Table.Cell>
+                              <Input
                                 aria-label={`Нэр ${index + 1}`}
                                 className={field}
                                 value={row.name}
                                 onChange={(event) => updateRow(index, { name: event.target.value })}
                               />
-                            </td>
-                            <td>
-                              <input
+                            </Table.Cell>
+                            <Table.Cell>
+                              <Input
                                 aria-label={`Оноо ${index + 1}`}
                                 className={field}
                                 type="number"
@@ -495,9 +509,9 @@ export function ToolPage({ kind }: { kind: Tool }) {
                                     updateRow(index, { score: value });
                                 }}
                               />
-                            </td>
-                            <td>
-                              <input
+                            </Table.Cell>
+                            <Table.Cell>
+                              <Input
                                 aria-label={`Ирц ${index + 1}`}
                                 className={field}
                                 value={row.attendance}
@@ -505,9 +519,9 @@ export function ToolPage({ kind }: { kind: Tool }) {
                                   updateRow(index, { attendance: event.target.value })
                                 }
                               />
-                            </td>
-                            <td>
-                              <button
+                            </Table.Cell>
+                            <Table.Cell>
+                              <ActionButton
                                 className={button}
                                 aria-label={`Мөр ${index + 1} устгах`}
                                 onClick={() =>
@@ -515,17 +529,17 @@ export function ToolPage({ kind }: { kind: Tool }) {
                                 }
                               >
                                 ×
-                              </button>
-                            </td>
-                          </tr>
+                              </ActionButton>
+                            </Table.Cell>
+                          </Table.Row>
                         ))}
-                      </tbody>
-                    </table>
+                      </Table.Body>
+                    </Table>
                   </div>
                   {!rows.length && (
                     <p>Хүснэгт хоосон байна. Мөр нэмэх эсвэл өөр зураг оруулна уу.</p>
                   )}
-                  <button
+                  <ActionButton
                     className={button}
                     disabled={rows.length >= 200}
                     onClick={() =>
@@ -533,11 +547,11 @@ export function ToolPage({ kind }: { kind: Tool }) {
                     }
                   >
                     Мөр нэмэх
-                  </button>
+                  </ActionButton>
                 </>
               ) : (
                 <Field label="Засварлах агуулга">
-                  <textarea
+                  <Textarea
                     className={`${field} edusmart:leading-relaxed`}
                     rows={19}
                     maxLength={100000}
@@ -547,15 +561,15 @@ export function ToolPage({ kind }: { kind: Tool }) {
                 </Field>
               )}
               <div className="edusmart:flex edusmart:flex-wrap edusmart:gap-2">
-                <button
+                <ActionButton
                   className={button}
                   disabled={saving || busy || !title.trim() || !content.trim()}
                   onClick={() => void saveWork()}
                 >
                   <IconDeviceFloppy size={16} />
                   {saving ? "Хадгалж байна…" : "Хадгалах"}
-                </button>
-                <button
+                </ActionButton>
+                <ActionButton
                   className={button}
                   disabled={busy}
                   onClick={() =>
@@ -566,10 +580,10 @@ export function ToolPage({ kind }: { kind: Tool }) {
                 >
                   <IconDownload size={16} />
                   {kind === "ocr" ? "Excel-д нээх CSV татах" : "Текст татах"}
-                </button>
+                </ActionButton>
                 {slides.length > 0 && (
                   <>
-                    <button
+                    <ActionButton
                       className={button}
                       onClick={() => {
                         setSlideIndex(0);
@@ -577,18 +591,18 @@ export function ToolPage({ kind }: { kind: Tool }) {
                       }}
                     >
                       Слайд үзүүлэх
-                    </button>
-                    <button className={button} onClick={exportSlides}>
+                    </ActionButton>
+                    <ActionButton className={button} onClick={exportSlides}>
                       Слайд татах (HTML)
-                    </button>
+                    </ActionButton>
                   </>
                 )}
               </div>
             </>
           )}
-        </section>
+        </Card>
       </div>
-      <section className={`${panel} edusmart:mt-8`} aria-label="Хадгалсан ажлууд">
+      <Card className={`${panel} edusmart:mt-8`} role="region" aria-label="Хадгалсан ажлууд">
         <h2 className="edusmart:mb-4 edusmart:text-lg edusmart:font-semibold">
           Миний хадгалсан ажлууд
         </h2>
@@ -596,9 +610,9 @@ export function ToolPage({ kind }: { kind: Tool }) {
         {history.error && (
           <p role="alert">
             {history.error.message}{" "}
-            <button className={button} onClick={() => void history.refetch()}>
+            <ActionButton className={button} onClick={() => void history.refetch()}>
               Дахин оролдох
-            </button>
+            </ActionButton>
           </p>
         )}
         {!history.loading && !history.error && !history.data?.edusmartWorks.length && (
@@ -607,7 +621,7 @@ export function ToolPage({ kind }: { kind: Tool }) {
         <ul className="edusmart:grid edusmart:gap-2">
           {history.data?.edusmartWorks.map((work) => (
             <li key={work._id}>
-              <button
+              <ActionButton
                 className={`${button} edusmart:w-full edusmart:justify-between edusmart:text-left`}
                 disabled={busy}
                 onClick={() => {
@@ -626,19 +640,19 @@ export function ToolPage({ kind }: { kind: Tool }) {
                 <time className="edusmart:text-xs edusmart:text-muted-foreground">
                   {new Date(work.createdAt).toLocaleDateString("mn-MN")}
                 </time>
-              </button>
+              </ActionButton>
             </li>
           ))}
         </ul>
         <div className="edusmart:mt-4 edusmart:flex edusmart:gap-2">
-          <button
+          <ActionButton
             className={button}
             disabled={!offset || history.loading}
             onClick={() => setOffset((current) => Math.max(0, current - 10))}
           >
             Өмнөх
-          </button>
-          <button
+          </ActionButton>
+          <ActionButton
             className={button}
             disabled={
               history.loading || (history.data?.edusmartWorks.length ?? 0) < 10 || offset >= 10000
@@ -646,9 +660,9 @@ export function ToolPage({ kind }: { kind: Tool }) {
             onClick={() => setOffset((current) => current + 10)}
           >
             Дараах
-          </button>
+          </ActionButton>
         </div>
-      </section>
+      </Card>
       {presenting && (
         <dialog
           ref={slidesDialog}
@@ -666,28 +680,28 @@ export function ToolPage({ kind }: { kind: Tool }) {
             <span>
               {slideIndex + 1} / {slides.length}
             </span>
-            <button autoFocus className={button} onClick={() => setPresenting(false)}>
+            <ActionButton autoFocus className={button} onClick={() => setPresenting(false)}>
               Хаах (Esc)
-            </button>
+            </ActionButton>
           </div>
           <div className="edusmart:mx-auto edusmart:flex edusmart:w-full edusmart:max-w-4xl edusmart:flex-1 edusmart:items-center edusmart:overflow-auto edusmart:whitespace-pre-wrap edusmart:text-2xl edusmart:leading-relaxed">
             {slides[slideIndex]}
           </div>
           <div className="edusmart:flex edusmart:justify-center edusmart:gap-4">
-            <button
+            <ActionButton
               className={button}
               disabled={!slideIndex}
               onClick={() => setSlideIndex((index) => index - 1)}
             >
               ← Өмнөх
-            </button>
-            <button
+            </ActionButton>
+            <ActionButton
               className={button}
               disabled={slideIndex >= slides.length - 1}
               onClick={() => setSlideIndex((index) => index + 1)}
             >
               Дараах →
-            </button>
+            </ActionButton>
           </div>
         </dialog>
       )}
