@@ -22,19 +22,6 @@ const SettingsPage = lazy(() =>
 export const Edusmart = () => (
   <AppLayout id={manifest.name} title={manifest.title} sidebar={<Navigation />}>
     <div className="edusmart:compass edusmart:h-full edusmart:overflow-auto edusmart:bg-background edusmart:text-foreground">
-      <header className="edusmart:flex edusmart:flex-wrap edusmart:items-center edusmart:justify-between edusmart:gap-4 edusmart:border-b edusmart:border-border edusmart:px-6 edusmart:py-5">
-        <Link to="/edusmart" className="edusmart:font-semibold edusmart:tracking-widest">
-          TEACHER <span className="edusmart:text-muted-foreground">COMPASS</span>
-        </Link>
-        <nav
-          aria-label="Үндсэн цэс"
-          className="edusmart:flex edusmart:flex-wrap edusmart:gap-5 edusmart:text-sm"
-        >
-          <Link to="/edusmart/voice">Дуу → Тайлан</Link>
-          <Link to="/edusmart/lessons">Хичээл & Слайд</Link>
-          <Link to="/edusmart/ocr">Зураг → Excel</Link>
-        </nav>
-      </header>
       <Suspense fallback={<div role="status">Loading…</div>}>
         <Routes>
           <Route index element={<IndexPage />} />
@@ -46,7 +33,7 @@ export const Edusmart = () => (
             path="*"
             element={
               <div className="edusmart:p-8">
-                Хуудас олдсонгүй. <Link to="/edusmart">Нүүр рүү буцах</Link>
+                Page not found. <Link to="/edusmart">Back to home</Link>
               </div>
             }
           />

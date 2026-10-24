@@ -6,16 +6,16 @@ import { SAMPLE_READ, WORKSPACE_READ, WORKSPACE_WRITE, AI_GENERATE } from "../pe
 import { generate, gradeRows } from "../services/assistant.ts";
 import { z } from "zod";
 
+const kindSchema = z.enum(["voice", "lessons", "ocr"]);
+
 async function authorize(context: Context, action: string) {
   if (!context.user?._id)
-    throw new GraphQLError("Нэвтэрнэ үү.", { extensions: { code: "UNAUTHENTICATED" } });
+    throw new GraphQLError("Please sign in.", { extensions: { code: "UNAUTHENTICATED" } });
   if (!context.subdomain)
     throw new GraphQLError("Tenant required", { extensions: { code: "FORBIDDEN" } });
   await context.checkPermission(action);
   return context.user._id;
 }
-const kindSchema = z.enum(["voice", "lessons", "ocr"]);
-
 // Every type and operation is prefixed with the plugin name: the gateway
 // composes all plugins into one supergraph, so names must be unique across it.
 export const typeDefs = gql`
@@ -84,8 +84,9 @@ export const resolvers = {
         !Number.isInteger(offset) ||
         offset < 0 ||
         offset > 10000
-      )
+      ) {
         throw new GraphQLError("Invalid page or tool", { extensions: { code: "BAD_USER_INPUT" } });
+      }
       const records = await context.models.Workspace.find({ kind, createdBy })
         .sort({ createdAt: -1, _id: -1 })
         .skip(offset)
@@ -161,15 +162,16 @@ export const resolvers = {
           content: z.string().trim().min(1).max(100000),
         })
         .safeParse(args);
-      if (!parsed.success)
-        throw new GraphQLError("Гарчиг болон агуулгаа шалгана уу.", {
+      if (!parsed.success) {
+        throw new GraphQLError("Check the title and content.", {
           extensions: { code: "BAD_USER_INPUT" },
         });
+      }
       if (parsed.data.kind === "ocr") {
         try {
           gradeRows.parse(JSON.parse(parsed.data.content));
         } catch {
-          throw new GraphQLError("Хүснэгтийн бүтэц буруу байна.", {
+          throw new GraphQLError("The table data is invalid.", {
             extensions: { code: "BAD_USER_INPUT" },
           });
         }

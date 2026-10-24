@@ -31,7 +31,9 @@ export function useRecording(onComplete: (blob: Blob) => void, onError: (message
     setStarting(true);
     try {
       if (!navigator.mediaDevices?.getUserMedia || typeof MediaRecorder === "undefined")
-        throw new Error("Энэ браузерт бичлэг дэмжигдэхгүй. Дууны файл оруулах боломжтой.");
+        throw new Error(
+          "Audio recording is not supported in this browser. You can upload an audio file instead.",
+        );
       const media = await navigator.mediaDevices.getUserMedia({ audio: true });
       if (!alive.current) {
         media.getTracks().forEach((track) => track.stop());
@@ -54,7 +56,7 @@ export function useRecording(onComplete: (blob: Blob) => void, onError: (message
         release();
         if (alive.current) {
           setRecording(false);
-          fail.current("Бичлэг тасалдлаа. Дахин оролдоно уу.");
+          fail.current("Recording stopped unexpectedly. Please try again.");
         }
       };
       instance.onstop = () => {
@@ -73,7 +75,7 @@ export function useRecording(onComplete: (blob: Blob) => void, onError: (message
     } catch (error) {
       release();
       if (alive.current)
-        fail.current(error instanceof Error ? error.message : "Микрофоны эрхийг шалгана уу.");
+        fail.current(error instanceof Error ? error.message : "Check your microphone permission.");
     } finally {
       acquiring.current = false;
       if (alive.current) setStarting(false);

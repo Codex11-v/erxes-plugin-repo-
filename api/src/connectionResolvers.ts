@@ -26,11 +26,7 @@ export type Context = Omit<IMainContext, "models"> & {
 // SaaS), so resolvers never touch another tenant's collections.
 const loadClasses = (db: Connection) => {
   const models = {} as IModels;
-  models.Workspace = db.model<WorkspaceRecord, WorkspaceModel>(
-    "edusmart_workspace",
-    workspaceSchema,
-  );
-
+  models.Workspace = db.model<WorkspaceRecord, WorkspaceModel>("edusmart_workspace", workspaceSchema);
   models.Samples = db.model<ISampleDocument, ISampleModel>(
     "edusmart_samples",
     loadSampleClass(models),

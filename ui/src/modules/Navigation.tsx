@@ -21,17 +21,17 @@ export const Navigation = () => (
           path={`/${manifest.ui.path}`}
         />
         <NavigationMenuLinkItem
-          name="Дуу → Тайлан"
+          name="Voice → Report"
           icon={IconMicrophone}
           path={`/${manifest.ui.path}/voice`}
         />
         <NavigationMenuLinkItem
-          name="Хичээл & Слайд"
+          name="Lesson & Slides"
           icon={IconPresentation}
           path={`/${manifest.ui.path}/lessons`}
         />
         <NavigationMenuLinkItem
-          name="Зураг → Excel"
+          name="Image → Excel"
           icon={IconScan}
           path={`/${manifest.ui.path}/ocr`}
         />

@@ -12,7 +12,7 @@ export const permissions: IPermissionConfig = {
   modules: [
     {
       name: "edusmartWorkspace",
-      description: "Teacher tools and personal saved work",
+      description: "Personal teacher work saved in EduSmart",
       scopeField: null,
       ownerFields: [],
       scopes: [{ name: "all", description: "Use tools; saved work is restricted to its author" }],
@@ -20,9 +20,22 @@ export const permissions: IPermissionConfig = {
         {
           name: WORKSPACE_READ,
           title: "Read own work",
-          description: "Read your saved teacher documents",
+          description: "View your saved teacher reports, lessons and tables",
         },
-        { name: WORKSPACE_WRITE, title: "Save own work", description: "Save teacher documents" },
+        {
+          name: WORKSPACE_WRITE,
+          title: "Save own work",
+          description: "Save teacher work in EduSmart",
+        },
+      ],
+    },
+    {
+      name: "edusmartTools",
+      description: "Generate teacher reports, lesson plans, slides, and tables",
+      scopeField: null,
+      ownerFields: [],
+      scopes: [{ name: "all", description: "Use the EduSmart teacher tools" }],
+      actions: [
         {
           name: AI_GENERATE,
           title: "Use AI tools",

@@ -2,9 +2,11 @@
 
 Teacher-assistance
 
-Teacher Compass tools: **Дуу → Тайлан**, **Хичээл & Слайд**, and
-**Зураг → Excel**, adapted from the reference app into native erxes routes.
-Set server-side `GEMINI_API_KEY` and grant the workspace/AI actions to use them.
+Teacher Compass tools: **Voice → Report**, **Lesson & Slides**, and
+**Image → Excel**, adapted from the reference app into native erxes routes.
+Set server-side `GEMINI_API_KEY` and grant `edusmartAiGenerate`,
+`edusmartWorkspaceRead` and `edusmartWorkspaceWrite` to generate and save work
+inside EduSmart.
 See [migration, features and setup](docs/teacher-compass.md).
 
 An erxes plugin that lives outside the erxes monorepo and joins an erxes stack.
@@ -12,11 +14,11 @@ The shared-library baseline is erxes 3.3.2. Dashed plugin names
 use the same public permission identity in the API and UI; the host must support
 normalized remote discovery and dashed page-module loading (see integration docs).
 
-| Part   | Path         | Stack                                                    | Dev port    |
-| ------ | ------------ | -------------------------------------------------------- | ----------- |
-| API    | `api`        | Node.js 22, erxes-api-shared startPlugin + tenant-scoped Mongoose models (Node.js)                             | 3399 |
-| UI     | `ui`         | React 18 Module Federation remote (Rspack), Tailwind CSS | 3099  |
-| Shared | `erxes.json` | Plugin identity and ports read by both parts             |             |
+| Part   | Path         | Stack                                                                              | Dev port |
+| ------ | ------------ | ---------------------------------------------------------------------------------- | -------- |
+| API    | `api`        | Node.js 22, erxes-api-shared startPlugin + tenant-scoped Mongoose models (Node.js) | 3399     |
+| UI     | `ui`         | React 18 Module Federation remote (Rspack), Tailwind CSS                           | 3099     |
+| Shared | `erxes.json` | Plugin identity and ports read by both parts                                       |          |
 
 The UI uses erxes's `erxes-ui`/`ui-modules` design system, installed from npm
 (`@erxes/ui`, `@erxes/ui-modules`; see
@@ -52,8 +54,8 @@ a private gateway-only network and strip user/tenant headers at public ingress.
 
 ## Scripts
 
-| Script              | What it does                                    |
-| ------------------- | ----------------------------------------------- |
+| Script             | What it does                                    |
+| ------------------ | ----------------------------------------------- |
 | `pnpm run dev:api` | API in watch mode                               |
 | `pnpm run dev:ui`  | UI remote dev server                            |
 | `pnpm run codegen` | Print the API schema, generate UI GraphQL types |

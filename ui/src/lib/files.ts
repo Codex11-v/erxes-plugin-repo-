@@ -8,11 +8,12 @@ export function download(content: string, name: string, type: string) {
 }
 
 export async function readFile(file: Blob): Promise<string> {
-  if (!file.size || file.size > 4 * 1024 * 1024) throw new Error("Файл 4 MB хүртэл байх ёстой.");
+  if (!file.size || file.size > 4 * 1024 * 1024)
+    throw new Error("File must be no larger than 4 MB.");
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
     reader.onload = () => resolve(String(reader.result).split(",")[1] ?? "");
-    reader.onerror = () => reject(new Error("Файл уншиж чадсангүй."));
+    reader.onerror = () => reject(new Error("Could not read the file."));
     reader.readAsDataURL(file);
   });
 }
@@ -31,7 +32,7 @@ export interface GradeRow {
 }
 export function parseRows(content: string): GradeRow[] {
   const rows: unknown = JSON.parse(content);
-  if (!Array.isArray(rows) || rows.length > 200) throw new Error("Хүснэгтийн бүтэц буруу байна.");
+  if (!Array.isArray(rows) || rows.length > 200) throw new Error("Invalid table structure.");
   return rows.map((row: unknown) => {
     if (
       !row ||
@@ -47,7 +48,7 @@ export function parseRows(content: string): GradeRow[] {
       !("attendance" in row) ||
       typeof row.attendance !== "string"
     )
-      throw new Error("Хүснэгтийн мөр буруу байна.");
+      throw new Error("Invalid table row.");
     return { name: row.name, score: row.score, attendance: row.attendance };
   });
 }

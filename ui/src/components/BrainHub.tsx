@@ -110,30 +110,30 @@ export function BrainHub() {
     {
       to: "/edusmart/voice",
       key: "voice",
-      name: "Дуу → Тайлан",
-      caption: "Ярьсан тэмдэглэлээ цэгцтэй тайлан болго.",
-      kind: "ДУУ ХООЛОЙ",
-      detail: "Бичлэг → Текст → Хянасан тайлан",
+      name: "Voice → Report",
+      caption: "Turn voice notes into a clear report.",
+      kind: "VOICE NOTES",
+      detail: "Recording → Transcript → Reviewed report",
       number: "01",
       icon: AudioLines,
     },
     {
       to: "/edusmart/lessons",
       key: "lessons",
-      name: "Хичээл & Слайд",
-      caption: "Сэдвээс төлөвлөгөө, төлөвлөгөөнөөс слайд.",
-      kind: "ХИЧЭЭЛ БЭЛТГЭЛ",
-      detail: "Сэдэв → AI төлөвлөгөө → Слайд",
+      name: "Lesson & Slides",
+      caption: "Turn a topic into a lesson plan and slides.",
+      kind: "LESSON PLANNING",
+      detail: "Topic → AI lesson plan → Slides",
       number: "02",
       icon: BookOpen,
     },
     {
       to: "/edusmart/ocr",
       key: "ocr",
-      name: "Зураг → Excel",
-      caption: "Цаасан журналаа засварлах хүснэгт болго.",
-      kind: "ЗУРАГ ТАНИХ",
-      detail: "Зураг → Хүснэгт → Excel",
+      name: "Image → Excel",
+      caption: "Convert a paper class journal into an editable table.",
+      kind: "IMAGE RECOGNITION",
+      detail: "Image → Editable table → Excel",
       number: "03",
       icon: ScanLine,
     },
@@ -147,22 +147,22 @@ export function BrainHub() {
       <header className="edusmart:hub-heading">
         <span className="edusmart:hub-kicker">
           <i />
-          ТАНЫ ӨДӨР ТУТМЫН AI ТУСЛАХ
+          YOUR EVERYDAY AI ASSISTANT
         </span>
         <h1 id="brain-hub-title">
-          Таны санаа.
+          Your ideas.
           <br />
-          <span>Илүү их боломж.</span>
+          <span>More possibilities.</span>
         </h1>
         <p>
-          Бичиг цаасны ажлаа хөнгөлөөд,
+          Spend less time on paperwork,
           <br />
-          багшлахдаа төвлөрөөрэй.
+          and more time teaching.
         </p>
         <span className="edusmart:hub-edition">
-          БҮТЭЭЛЧ СЭТГЭЛГЭЭГ ДЭМЖИНЭ
+          SUPPORTS CREATIVE THINKING
           <br />
-          БАГШИЙН ХЯНАЛТТАЙ AI
+          AI WITH TEACHER REVIEW
         </span>
       </header>
       <div className="edusmart:hub-stage">
@@ -212,10 +212,10 @@ export function BrainHub() {
           <BrainArtwork />
           <span className="edusmart:hub-core-label">
             <i />
-            {selected ? selected.kind : "ТАНЫ AI ТӨВ"}
+            {selected ? selected.kind : "YOUR AI HUB"}
           </span>
           <span className="edusmart:hub-brain-caption">
-            {selected ? "Дараад эхлүүлээрэй" : "Санааг ажил болгоно"}
+            {selected ? "Select a tool to get started" : "Turn ideas into action"}
           </span>
         </div>
         {actions.map((action) => (
@@ -248,22 +248,24 @@ export function BrainHub() {
             </div>
             <span className="edusmart:hub-action-caption">{action.caption}</span>
             <span className="edusmart:hub-action-open">
-              Хэрэгслийг нээх <ArrowUpRight size={13} />
+              Open tool <ArrowUpRight size={13} />
             </span>
           </Link>
         ))}
-        <span className="edusmart:hub-coordinate edusmart:coord-left">САНАА · БҮТЭЭЛ · БОЛОМЖ</span>
-        <span className="edusmart:hub-coordinate edusmart:coord-right">УХААЛАГ ХЭРЭГЛЭЭ</span>
+        <span className="edusmart:hub-coordinate edusmart:coord-left">
+          IDEAS · CRAFT · POSSIBILITY
+        </span>
+        <span className="edusmart:hub-coordinate edusmart:coord-right">THOUGHTFUL AI</span>
       </div>
       <footer className="edusmart:hub-footer">
         <p>
-          <span>Гурван хэрэгсэл.</span> Багшлахад илүү их цаг.
+          <span>Three tools.</span> More time to teach.
         </p>
         <span className="edusmart:hub-footer-note">
           <ArrowDownRight size={17} />
-          {selected ? selected.detail : "Таны дараагийн алхам эндээс эхэлнэ"}
+          {selected ? selected.detail : "Your next step starts here"}
         </span>
-        <span className="edusmart:hub-footer-mark">AI / БАГШИЙН ХЯНАЛТТАЙ</span>
+        <span className="edusmart:hub-footer-mark">AI / TEACHER REVIEW</span>
       </footer>
     </section>
   );
