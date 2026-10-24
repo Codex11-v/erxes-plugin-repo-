@@ -1,7 +1,18 @@
 import { useMutation, useQuery } from "@apollo/client";
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import { Link } from "react-router";
-import { Badge, Button, Card, Checkbox, Input, Label, Select, Table, Textarea } from "erxes-ui";
+import {
+  Badge,
+  Button,
+  Card,
+  Checkbox,
+  DatePicker,
+  Input,
+  Label,
+  Select,
+  Table,
+  Textarea,
+} from "erxes-ui";
 import type { ButtonProps } from "erxes-ui";
 import {
   IconArrowLeft,
@@ -54,6 +65,13 @@ function Field({ label, children }: { label: string; children: ReactNode }) {
 function ActionButton({ className = "", variant = "outline", ...props }: ButtonProps) {
   const classes = [...new Set(`${button} ${className}`.split(/\s+/).filter(Boolean))].join(" ");
   return <Button className={classes} variant={variant} {...props} />;
+}
+
+function dateValue(date: Date): string {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
 }
 
 export function ToolPage({ kind }: { kind: Tool }) {
@@ -281,11 +299,13 @@ export function ToolPage({ kind }: { kind: Tool }) {
                 />
               </Field>
               <Field label="Огноо">
-                <Input
-                  className={field}
-                  type="date"
+                <DatePicker
+                  className="edusmart:w-full"
                   value={date}
-                  onChange={(event) => setDate(event.target.value)}
+                  displayFormat="YYYY.MM.DD"
+                  placeholder="Огноо сонгох"
+                  clearable={false}
+                  onChange={(value) => setDate(value instanceof Date ? dateValue(value) : "")}
                 />
               </Field>
               <Field label="Анги">
