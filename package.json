@@ -1,0 +1,31 @@
+{
+  "name": "edusmart",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "pnpm --filter edusmart_api exec tsx --test tests/*.test.ts",
+    "dev:api": "pnpm --filter edusmart_api dev",
+    "dev:ui": "pnpm run codegen && pnpm --filter edusmart_ui dev",
+    "codegen": "pnpm --filter edusmart_api schema:print && pnpm --filter edusmart_ui codegen",
+    "build": "pnpm run codegen && pnpm --filter edusmart_api build && pnpm --filter edusmart_ui build",
+    "check": "pnpm run codegen && pnpm --filter edusmart_api check && pnpm --filter edusmart_ui check",
+    "lint": "oxlint",
+    "fmt": "oxfmt"
+  },
+  "devDependencies": {
+    "oxfmt": "^0.71.0",
+    "oxlint": "^1.86.0"
+  },
+  "pnpm": {
+    "overrides": {
+      "react": "18.3.1",
+      "react-dom": "18.3.1",
+      "@sentry/node": "10.76.2",
+      "@opentelemetry/api": "1.9.1",
+      "@opentelemetry/instrumentation": "0.220.0",
+      "@opentelemetry/sdk-trace-base": "2.12.0"
+    }
+  },
+  "packageManager": "pnpm@9.12.3"
+}

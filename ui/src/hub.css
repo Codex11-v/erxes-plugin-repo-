@@ -1,0 +1,880 @@
+.edusmart\:compass {
+  --hub-paper: var(--background);
+  --hub-ink: var(--foreground);
+  --hub-muted: var(--muted-foreground);
+  --hub-line: var(--border);
+  --hub-orange: #d96232;
+  --hub-surface: var(--background);
+  --hub-card-line: var(--border);
+  --font-display: ui-sans-serif, system-ui, sans-serif;
+}
+.edusmart\:brain-hub {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+}
+.edusmart\:brain-hub:before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: -1;
+  background: radial-gradient(
+    ellipse at 50% 45%,
+    color-mix(in srgb, var(--hub-surface) 85%, transparent),
+    transparent 60%
+  );
+}
+.edusmart\:hub-heading {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  max-width: 1560px;
+  margin: auto;
+  padding: 34px 52px 0;
+  z-index: 2;
+  pointer-events: none;
+}
+.edusmart\:hub-kicker {
+  display: flex;
+  gap: 9px;
+  align-items: center;
+  font-size: 9px;
+  letter-spacing: 1.4px;
+  font-weight: 500;
+  color: var(--hub-muted);
+  margin-bottom: 17px;
+}
+.edusmart\:hub-kicker i {
+  height: 6px;
+  width: 6px;
+  background: var(--hub-orange);
+  border-radius: 50%;
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--hub-orange) 8%, transparent);
+}
+.edusmart\:hub-heading h1 {
+  font-family: var(--font-display);
+  font-size: clamp(32px, 3.1vw, 46px);
+  line-height: 1.22;
+  font-weight: 600;
+  letter-spacing: -1.8px;
+  max-width: 440px;
+}
+.edusmart\:hub-heading h1 > span {
+  color: var(--hub-muted);
+  font-weight: 400;
+}
+.edusmart\:hub-heading p {
+  font-size: 12px;
+  line-height: 1.8;
+  color: var(--hub-muted);
+  margin-top: 15px;
+}
+.edusmart\:hub-edition {
+  position: absolute;
+  right: 52px;
+  top: 40px;
+  text-align: right;
+  font-size: 8px;
+  letter-spacing: 1.1px;
+  line-height: 2;
+  color: var(--hub-muted);
+}
+.edusmart\:hub-stage {
+  --orbit-size: min(62vw, 710px);
+  --core-offset: calc(var(--orbit-size) * 0.02375);
+  position: relative;
+  max-width: 1440px;
+  height: clamp(565px, calc(100svh - 146px), 800px);
+  margin: auto;
+}
+.edusmart\:hub-radial {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: var(--orbit-size);
+  height: auto;
+  max-width: none;
+  transform: translate(-50%, -50%);
+  color: var(--hub-line);
+  pointer-events: none;
+  overflow: visible;
+}
+.edusmart\:hub-disc {
+  fill: var(--hub-surface);
+  stroke: var(--hub-card-line);
+  stroke-width: 1;
+}
+.edusmart\:hub-rays {
+  stroke: var(--hub-line);
+  stroke-width: 0.6;
+  fill: var(--hub-line);
+  opacity: 0.63;
+}
+.edusmart\:hub-orbit-track {
+  fill: none;
+  stroke: var(--hub-line);
+  stroke-width: 0.6;
+  stroke-dasharray: 1 8;
+  opacity: 0.65;
+}
+.edusmart\:hub-orbit-accent {
+  fill: none;
+  stroke: var(--hub-orange);
+  stroke-width: 1.4;
+  stroke-dasharray: 20 2000;
+  opacity: 0.5;
+  transform-origin: 400px 346px;
+  transition:
+    transform 0.65s cubic-bezier(0.2, 0.8, 0.2, 1),
+    opacity 0.3s;
+}
+.edusmart\:hub-orbit-satellite {
+  fill: var(--hub-paper);
+  stroke: var(--hub-orange);
+  stroke-width: 1;
+  transform-origin: 400px 346px;
+  transition: transform 0.65s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+.edusmart\:hub-active-voice .edusmart\:hub-orbit-accent,
+.edusmart\:hub-active-voice .edusmart\:hub-orbit-satellite {
+  transform: rotate(-90deg);
+  opacity: 1;
+}
+.edusmart\:hub-active-ocr .edusmart\:hub-orbit-accent,
+.edusmart\:hub-active-ocr .edusmart\:hub-orbit-satellite {
+  transform: rotate(90deg);
+  opacity: 1;
+}
+.edusmart\:hub-active-lessons .edusmart\:hub-orbit-accent,
+.edusmart\:hub-active-lessons .edusmart\:hub-orbit-satellite {
+  transform: rotate(180deg);
+  opacity: 1;
+}
+.edusmart\:hub-connectors {
+  fill: var(--hub-paper);
+  stroke: var(--hub-line);
+  stroke-width: 0.8;
+}
+.edusmart\:hub-connectors path {
+  fill: none;
+  transition:
+    stroke 0.25s,
+    stroke-width 0.25s;
+}
+.edusmart\:hub-active-voice .edusmart\:connector-voice,
+.edusmart\:hub-active-ocr .edusmart\:connector-ocr,
+.edusmart\:hub-active-lessons .edusmart\:connector-lessons {
+  stroke: var(--hub-orange);
+  stroke-width: 1.5;
+}
+.edusmart\:hub-brain {
+  position: absolute;
+  left: 50%;
+  top: calc(50% - var(--core-offset));
+  transform: translate(-50%, -50%);
+  width: 226px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  pointer-events: none;
+}
+.edusmart\:brain-artwork {
+  width: 100%;
+  height: auto;
+  overflow: visible;
+  position: relative;
+  filter: drop-shadow(0 18px 24px #6b32121a);
+  transition: transform 0.6s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+.edusmart\:brain-hub:has(.edusmart\:hub-action:hover) .edusmart\:brain-artwork,
+.edusmart\:brain-hub:has(.edusmart\:hub-action:focus-visible) .edusmart\:brain-artwork {
+  transform: translateY(-3px);
+}
+.edusmart\:hub-brain-halo {
+  position: absolute;
+  left: 50%;
+  top: 44%;
+  transform: translate(-50%, -50%);
+  width: 230px;
+  height: 230px;
+  border-radius: 50%;
+  background: radial-gradient(circle, #f5a04f16, transparent 70%);
+  opacity: 0.45;
+  transition: opacity 0.4s;
+}
+.edusmart\:brain-hub:has(.edusmart\:hub-action:hover) .edusmart\:hub-brain-halo {
+  opacity: 1;
+}
+.edusmart\:hub-core-label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 8px;
+  letter-spacing: 1.4px;
+  color: var(--hub-ink);
+  margin-top: 6px;
+}
+.edusmart\:hub-core-label i {
+  width: 4px;
+  height: 4px;
+  background: var(--hub-orange);
+  border-radius: 50%;
+}
+.edusmart\:hub-brain-caption {
+  font-size: 10px;
+  color: var(--hub-muted);
+  margin-top: 6px;
+  letter-spacing: 0.1px;
+}
+.edusmart\:hub-action {
+  position: absolute;
+  width: 258px;
+  padding: 18px 20px 16px;
+  border: 1px solid var(--hub-card-line);
+  border-radius: 14px;
+  background: var(--hub-surface);
+  color: var(--hub-ink);
+  z-index: 3;
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+  box-shadow:
+    0 2px 4px #20301503,
+    0 10px 30px #20301504;
+  transition:
+    transform 0.25s cubic-bezier(0.2, 0.8, 0.2, 1),
+    box-shadow 0.25s,
+    border-color 0.25s;
+  outline-offset: 5px;
+}
+.edusmart\:hub-action:after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  border: 1px solid var(--hub-line);
+  background: var(--hub-surface);
+  transition:
+    border-color 0.2s,
+    background 0.2s;
+}
+.edusmart\:hub-action-voice {
+  left: clamp(24px, 3.7vw, 64px);
+  top: calc(50% - 76px - var(--core-offset));
+}
+.edusmart\:hub-action-voice:after {
+  right: -5px;
+}
+.edusmart\:hub-action-ocr {
+  right: clamp(24px, 3.7vw, 64px);
+  top: calc(50% - 76px - var(--core-offset));
+}
+.edusmart\:hub-action-ocr:after {
+  left: -5px;
+}
+.edusmart\:hub-action-lessons {
+  width: 300px;
+  left: 50%;
+  bottom: 20px;
+  transform: translateX(-50%);
+  padding: 14px 18px 12px;
+}
+.edusmart\:hub-action-lessons:after {
+  left: calc(50% - 4px);
+  top: -5px;
+}
+.edusmart\:hub-action-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 13px;
+}
+.edusmart\:hub-action-index {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 8px;
+  letter-spacing: 0.8px;
+  color: var(--hub-muted);
+}
+.edusmart\:hub-action-index i {
+  display: block;
+  width: 13px;
+  height: 1px;
+  background: var(--hub-line);
+}
+.edusmart\:hub-action-arrow {
+  color: var(--hub-muted);
+  width: 17px;
+  height: 17px;
+  transition:
+    transform 0.2s,
+    color 0.2s;
+}
+.edusmart\:hub-action-title {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+}
+.edusmart\:hub-action-title > strong {
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: 19px;
+  letter-spacing: -0.65px;
+  white-space: nowrap;
+}
+.edusmart\:hub-action-icon {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border: 1px solid var(--hub-card-line);
+  border-radius: 10px;
+  background: var(--hub-paper);
+  color: var(--hub-orange);
+  flex-shrink: 0;
+  transition:
+    background 0.2s,
+    color 0.2s,
+    border-color 0.2s;
+}
+.edusmart\:hub-action-caption {
+  font-size: 11px;
+  line-height: 1.7;
+  color: var(--hub-muted);
+  margin-top: 10px;
+  max-width: 218px;
+}
+.edusmart\:hub-action-open {
+  display: flex;
+  gap: 7px;
+  align-items: center;
+  font-size: 9px;
+  color: var(--hub-orange);
+  margin-top: 12px;
+  opacity: 0;
+  transform: translateX(-4px);
+  transition:
+    opacity 0.2s,
+    transform 0.2s;
+}
+.edusmart\:hub-action:hover,
+.edusmart\:hub-action:focus-visible {
+  border-color: color-mix(in srgb, var(--hub-orange) 55%, var(--hub-card-line));
+  box-shadow:
+    0 3px 6px #20301504,
+    0 16px 36px #2030150a;
+  transform: translateY(-3px);
+}
+.edusmart\:hub-action-lessons:hover,
+.edusmart\:hub-action-lessons:focus-visible {
+  transform: translate(-50%, -3px);
+}
+.edusmart\:hub-action:hover:after,
+.edusmart\:hub-action:focus-visible:after {
+  background: var(--hub-orange);
+  border-color: var(--hub-orange);
+}
+.edusmart\:hub-action:hover .edusmart\:hub-action-icon,
+.edusmart\:hub-action:focus-visible .edusmart\:hub-action-icon {
+  background: var(--hub-orange);
+  color: var(--hub-surface);
+  border-color: var(--hub-orange);
+}
+.edusmart\:hub-action:hover .edusmart\:hub-action-arrow,
+.edusmart\:hub-action:focus-visible .edusmart\:hub-action-arrow {
+  color: var(--hub-orange);
+  transform: translate(2px, -2px);
+}
+.edusmart\:hub-action:hover .edusmart\:hub-action-open,
+.edusmart\:hub-action:focus-visible .edusmart\:hub-action-open {
+  opacity: 1;
+  transform: none;
+}
+.edusmart\:hub-action-lessons .edusmart\:hub-action-top {
+  margin-bottom: 6px;
+}
+.edusmart\:hub-action-lessons .edusmart\:hub-action-caption {
+  max-width: none;
+  margin-top: 6px;
+}
+.edusmart\:hub-action-lessons .edusmart\:hub-action-open {
+  display: none;
+}
+.edusmart\:hub-coordinate {
+  position: absolute;
+  top: calc(50% + 120px);
+  font-size: 7px;
+  letter-spacing: 1.5px;
+  color: var(--hub-muted);
+  writing-mode: vertical-rl;
+  opacity: 0.7;
+}
+.edusmart\:coord-left {
+  left: 62px;
+}
+.edusmart\:coord-right {
+  right: 62px;
+}
+.edusmart\:hub-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  min-height: 66px;
+  margin: 0 48px;
+  padding: 16px 4px;
+  border-top: 1px solid var(--hub-card-line);
+}
+.edusmart\:hub-footer p {
+  font-size: 11px;
+  color: var(--hub-muted);
+}
+.edusmart\:hub-footer p > span {
+  color: var(--hub-ink);
+  font-weight: 500;
+}
+.edusmart\:hub-footer-note {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 11px;
+  line-height: 1.6;
+  color: var(--hub-muted);
+  min-width: 310px;
+  justify-content: center;
+}
+.edusmart\:hub-footer-note > svg {
+  color: var(--hub-orange);
+}
+.edusmart\:hub-footer-mark {
+  font-size: 8px;
+  letter-spacing: 1px;
+  color: var(--hub-muted);
+}
+.edusmart\:compass-shell a:focus-visible,
+.edusmart\:compass-shell button:focus-visible {
+  outline: 2px solid var(--hub-orange);
+  outline-offset: 4px;
+}
+.dark .edusmart\:brain-artwork {
+  filter: drop-shadow(0 16px 30px #0004) saturate(0.93);
+}
+@media (min-width: 1500px) {
+  .edusmart\:hub-stage {
+    --orbit-size: 790px;
+  }
+  .edusmart\:hub-brain {
+    width: 260px;
+  }
+  .edusmart\:hub-action {
+    width: 286px;
+    padding: 22px;
+  }
+  .edusmart\:hub-action-title > strong {
+    font-size: 21px;
+  }
+  .edusmart\:hub-action-caption {
+    font-size: 12px;
+    max-width: 240px;
+  }
+  .edusmart\:hub-action-lessons {
+    width: 330px;
+    padding: 16px 20px;
+  }
+  .edusmart\:hub-heading {
+    padding-top: 40px;
+  }
+  .edusmart\:hub-heading h1 {
+    font-size: 48px;
+  }
+}
+@media (max-width: 1080px) {
+  .edusmart\:compass-header {
+    padding: 0 28px;
+  }
+  .edusmart\:compass-desktop-nav a {
+    padding: 9px 12px;
+    font-size: 11px;
+  }
+  .edusmart\:hub-heading {
+    padding: 28px 32px 0;
+  }
+  .edusmart\:hub-heading h1 {
+    font-size: 32px;
+    max-width: 320px;
+  }
+  .edusmart\:hub-heading p {
+    font-size: 11px;
+  }
+  .edusmart\:hub-edition {
+    right: 32px;
+    font-size: 7px;
+  }
+  .edusmart\:hub-stage {
+    --orbit-size: 610px;
+    height: 610px;
+  }
+  .edusmart\:hub-brain {
+    width: 196px;
+  }
+  .edusmart\:hub-action {
+    width: 221px;
+    padding: 16px;
+  }
+  .edusmart\:hub-action-title > strong {
+    font-size: 16px;
+  }
+  .edusmart\:hub-action-icon {
+    width: 32px;
+    height: 32px;
+  }
+  .edusmart\:hub-action-caption {
+    font-size: 10px;
+  }
+  .edusmart\:hub-action-lessons {
+    width: 270px;
+    padding: 12px 16px;
+  }
+  .edusmart\:hub-action-voice {
+    left: 24px;
+  }
+  .edusmart\:hub-action-ocr {
+    right: 24px;
+  }
+  .edusmart\:hub-footer {
+    margin: 0 28px;
+  }
+  .edusmart\:hub-footer-mark {
+    display: none;
+  }
+  .edusmart\:hub-coordinate {
+    display: none;
+  }
+}
+@media (max-height: 780px) and (min-width: 1081px) {
+  .edusmart\:hub-stage {
+    --orbit-size: 630px;
+  }
+  .edusmart\:hub-brain {
+    width: 206px;
+  }
+  .edusmart\:hub-heading {
+    padding-top: 26px;
+  }
+  .edusmart\:hub-heading h1 {
+    font-size: 34px;
+  }
+  .edusmart\:hub-kicker {
+    margin-bottom: 12px;
+    font-size: 8px;
+  }
+  .edusmart\:hub-heading p {
+    font-size: 11px;
+  }
+  .edusmart\:hub-action {
+    padding: 15px 18px;
+  }
+  .edusmart\:hub-action-title > strong {
+    font-size: 18px;
+  }
+  .edusmart\:hub-action-top {
+    margin-bottom: 8px;
+  }
+  .edusmart\:hub-action-open {
+    margin-top: 8px;
+  }
+  .edusmart\:hub-action-lessons {
+    bottom: 16px;
+    padding: 11px 18px;
+  }
+  .edusmart\:hub-action-lessons .edusmart\:hub-action-title > strong {
+    font-size: 17px;
+  }
+  .edusmart\:hub-action-lessons .edusmart\:hub-action-icon {
+    width: 30px;
+    height: 30px;
+  }
+  .edusmart\:hub-action-lessons .edusmart\:hub-action-caption {
+    font-size: 10px;
+  }
+  .edusmart\:hub-edition {
+    top: 28px;
+  }
+  .edusmart\:hub-coordinate {
+    top: calc(50% + 90px);
+  }
+}
+@media (max-width: 740px) {
+  .edusmart\:compass-header {
+    height: 76px;
+    padding: 0 20px;
+  }
+  .edusmart\:compass-desktop-nav {
+    display: none;
+  }
+  .edusmart\:compass-menu-toggle {
+    display: grid;
+  }
+  .edusmart\:compass-header-actions {
+    gap: 5px;
+  }
+  .edusmart\:compass-brand {
+    gap: 10px;
+  }
+  .edusmart\:compass-brand > strong {
+    font-size: 10px;
+  }
+  .edusmart\:compass-brand > strong > span {
+    font-size: 7px;
+  }
+  .edusmart\:compass-brand > span {
+    width: 34px;
+    height: 34px;
+    border-radius: 10px;
+  }
+  .edusmart\:compass-page-main {
+    padding: 26px 18px 40px;
+  }
+  .edusmart\:compass-page-heading h1 {
+    font-size: 27px;
+  }
+  .edusmart\:compass-page-heading p {
+    font-size: 13px;
+  }
+  .edusmart\:hub-heading {
+    position: relative;
+    padding: 30px 24px 0;
+    text-align: center;
+  }
+  .edusmart\:hub-kicker {
+    justify-content: center;
+    font-size: 8px;
+    margin-bottom: 13px;
+  }
+  .edusmart\:hub-heading h1 {
+    max-width: none;
+    font-size: 34px;
+    line-height: 1.2;
+    letter-spacing: -1.3px;
+  }
+  .edusmart\:hub-heading h1 br {
+    display: none;
+  }
+  .edusmart\:hub-heading h1 > span {
+    display: block;
+  }
+  .edusmart\:hub-heading p {
+    font-size: 12px;
+    line-height: 1.6;
+    margin-top: 13px;
+  }
+  .edusmart\:hub-heading p br {
+    display: none;
+  }
+  .edusmart\:hub-edition {
+    display: none;
+  }
+  .edusmart\:hub-stage {
+    --orbit-size: 460px;
+    --core-offset: 11px;
+    height: 615px;
+    margin-top: -12px;
+  }
+  .edusmart\:hub-radial {
+    top: 210px;
+  }
+  .edusmart\:hub-brain {
+    top: 199px;
+    width: 182px;
+  }
+  .edusmart\:hub-core-label {
+    font-size: 7px;
+    letter-spacing: 1px;
+    margin-top: 0;
+  }
+  .edusmart\:hub-brain-caption {
+    font-size: 9px;
+    margin-top: 5px;
+  }
+  .edusmart\:hub-action {
+    width: calc(50% - 26px);
+    padding: 13px 12px;
+    border-radius: 12px;
+  }
+  .edusmart\:hub-action-voice {
+    left: 18px;
+    top: 377px;
+  }
+  .edusmart\:hub-action-ocr {
+    right: 18px;
+    top: 377px;
+  }
+  .edusmart\:hub-action-voice:after,
+  .edusmart\:hub-action-ocr:after {
+    top: -5px;
+    left: calc(50% - 4px);
+    right: auto;
+  }
+  .edusmart\:hub-action-top {
+    margin-bottom: 11px;
+  }
+  .edusmart\:hub-action-index {
+    font-size: 7px;
+    gap: 5px;
+    letter-spacing: 0.2px;
+  }
+  .edusmart\:hub-action-index i {
+    width: 7px;
+  }
+  .edusmart\:hub-action-arrow {
+    width: 15px;
+    height: 15px;
+  }
+  .edusmart\:hub-action-title {
+    gap: 7px;
+  }
+  .edusmart\:hub-action-title > strong {
+    font-size: 14px;
+    letter-spacing: -0.45px;
+  }
+  .edusmart\:hub-action-icon {
+    width: 27px;
+    height: 27px;
+    border-radius: 7px;
+  }
+  .edusmart\:hub-action-icon > svg {
+    width: 18px;
+    height: 18px;
+  }
+  .edusmart\:hub-action-caption {
+    font-size: 10px;
+    line-height: 1.6;
+    min-height: 32px;
+    margin-top: 9px;
+  }
+  .edusmart\:hub-action-open {
+    display: none;
+  }
+  .edusmart\:hub-action-lessons {
+    width: calc(100% - 36px);
+    left: 18px;
+    transform: none;
+    bottom: 10px;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0;
+    padding: 12px 16px;
+  }
+  .edusmart\:hub-action-lessons:hover,
+  .edusmart\:hub-action-lessons:focus-visible {
+    transform: translateY(-3px);
+  }
+  .edusmart\:hub-action-lessons .edusmart\:hub-action-top {
+    position: absolute;
+    top: 14px;
+    right: 14px;
+  }
+  .edusmart\:hub-action-lessons .edusmart\:hub-action-index {
+    display: none;
+  }
+  .edusmart\:hub-action-lessons .edusmart\:hub-action-title > strong {
+    font-size: 15px;
+  }
+  .edusmart\:hub-action-lessons .edusmart\:hub-action-caption {
+    margin-left: 34px;
+    font-size: 10px;
+    min-height: 0;
+    margin-top: 4px;
+  }
+  .edusmart\:hub-coordinate {
+    display: none;
+  }
+  .edusmart\:hub-footer {
+    margin: 0 20px;
+    padding: 18px 0;
+    gap: 12px;
+    flex-direction: column;
+    text-align: center;
+  }
+  .edusmart\:hub-footer p {
+    font-size: 11px;
+  }
+  .edusmart\:hub-footer-note {
+    min-width: 0;
+    font-size: 10px;
+  }
+  .edusmart\:hub-footer-mark {
+    display: none;
+  }
+  .edusmart\:hub-rays {
+    opacity: 0.5;
+  }
+}
+@media (max-width: 370px) {
+  .edusmart\:compass-profile {
+    display: none;
+  }
+  .edusmart\:hub-heading h1 {
+    font-size: 29px;
+  }
+  .edusmart\:hub-action-title {
+    gap: 5px;
+  }
+  .edusmart\:hub-action-title > strong {
+    font-size: 12px;
+  }
+  .edusmart\:hub-action-caption {
+    font-size: 9px;
+  }
+  .edusmart\:hub-action-icon {
+    width: 24px;
+    height: 24px;
+  }
+  .edusmart\:hub-action-index {
+    font-size: 6px;
+  }
+  .edusmart\:hub-stage {
+    --orbit-size: 420px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .edusmart\:brain-hub *,
+  .edusmart\:compass-shell a,
+  .edusmart\:compass-shell button {
+    transition: none !important;
+    animation: none !important;
+  }
+  .edusmart\:hub-action:hover,
+  .edusmart\:hub-action:focus-visible {
+    transform: none;
+  }
+  .edusmart\:hub-action-lessons:hover,
+  .edusmart\:hub-action-lessons:focus-visible {
+    transform: translateX(-50%);
+  }
+  .edusmart\:brain-hub:has(.edusmart\:hub-action:hover) .edusmart\:brain-artwork {
+    transform: none;
+  }
+}
+@media (prefers-reduced-motion: reduce) and (max-width: 740px) {
+  .edusmart\:hub-action-lessons:hover,
+  .edusmart\:hub-action-lessons:focus-visible {
+    transform: none;
+  }
+}
+@media print {
+  .edusmart\:compass-header,
+  .edusmart\:compass-mobile-nav,
+  .edusmart\:brain-hub {
+    display: none !important;
+  }
+  .edusmart\:compass-page-main {
+    padding: 0;
+  }
+}
