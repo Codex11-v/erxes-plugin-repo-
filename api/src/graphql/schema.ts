@@ -54,6 +54,11 @@ export const typeDefs = gql`
     subject: String
     grade: String
     duration: Int
+    topic: String
+    instructions: String
+    teacher: String
+    className: String
+    date: String
     file: String
     mimeType: String
   }
@@ -98,7 +103,9 @@ export const resolvers = {
       subdomain,
       userId: user?._id ?? null,
       userEmail: user?.email ?? null,
-      aiReady: Boolean(process.env.GEMINI_API_KEY),
+      aiReady: Boolean(
+        process.env.GEMINI_API_KEY || process.env.GROQ_API_KEY || process.env.OPENAI_API_KEY,
+      ),
     }),
     edusmartSamples: async (
       _parent: unknown,

@@ -51,9 +51,22 @@ function Field({ label, children }: { label: string; children: ReactNode }) {
 
 export function ToolPage({ kind }: { kind: Tool }) {
   const [text, setText] = useState("");
+  const [topic, setTopic] = useState("");
+  const [instructions, setInstructions] = useState("");
   const [subject, setSubject] = useState("");
   const [grade, setGrade] = useState("5");
   const [duration, setDuration] = useState(40);
+  const [teacher, setTeacher] = useState("");
+  const [className, setClassName] = useState("8А");
+  const [date, setDate] = useState(() =>
+    new Intl.DateTimeFormat("en-CA", {
+      timeZone: "Asia/Ulaanbaatar",
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+    }).format(new Date()),
+  );
+  const [consent, setConsent] = useState(false);
   const [file, setFile] = useState<File | null>(null);
   const [content, setContent] = useState("");
   const [title, setTitle] = useState("");
@@ -98,10 +111,15 @@ export function ToolPage({ kind }: { kind: Tool }) {
         variables: {
           input: {
             kind: transcribe ? "transcribe" : kind,
-            text,
+            text: kind === "lessons" ? topic : text,
             subject,
             grade,
             duration,
+            topic,
+            instructions,
+            teacher,
+            className,
+            date,
             ...(media && file
               ? { file: await readFile(file), mimeType: file.type.split(";")[0] }
               : {}),
@@ -120,7 +138,7 @@ export function ToolPage({ kind }: { kind: Tool }) {
           if (!extracted.length) setNotice("Зургаас хүснэгт олдсонгүй. Илүү тод зураг оруулна уу.");
         }
         setContent(output);
-        setTitle(text.trim().slice(0, 100) || meta.title);
+        setTitle((kind === "lessons" ? topic : text).trim().slice(0, 100) || meta.title);
       }
     } catch (cause) {
       setError(cause instanceof Error ? cause.message : "Алдаа гарлаа.");
@@ -191,7 +209,7 @@ export function ToolPage({ kind }: { kind: Tool }) {
             <>
               <button
                 className={button}
-                disabled={busy || recording.starting}
+                disabled={busy || recording.starting || !consent}
                 onClick={() => (recording.recording ? recording.stop() : void recording.start())}
               >
                 {recording.recording ? <IconPlayerStop size={18} /> : <IconMicrophone size={18} />}
@@ -236,13 +254,49 @@ export function ToolPage({ kind }: { kind: Tool }) {
               {kind === "voice" && (
                 <button
                   className={button}
-                  disabled={!file || busy || recording.recording}
+                  disabled={!file || busy || recording.recording || !consent}
                   onClick={() => void run(true)}
                 >
                   Текст болгох
                 </button>
               )}
             </>
+          )}
+          {kind === "voice" && (
+            <div className="edusmart:grid edusmart:grid-cols-2 edusmart:gap-4">
+              <Field label="Багшийн нэр">
+                <input
+                  className={field}
+                  maxLength={120}
+                  value={teacher}
+                  onChange={(event) => setTeacher(event.target.value)}
+                />
+              </Field>
+              <Field label="Огноо">
+                <input
+                  className={field}
+                  type="date"
+                  value={date}
+                  onChange={(event) => setDate(event.target.value)}
+                />
+              </Field>
+              <Field label="Анги">
+                <input
+                  className={field}
+                  maxLength={80}
+                  value={className}
+                  onChange={(event) => setClassName(event.target.value)}
+                />
+              </Field>
+              <Field label="Хичээл">
+                <input
+                  className={field}
+                  maxLength={120}
+                  value={subject}
+                  onChange={(event) => setSubject(event.target.value)}
+                />
+              </Field>
+            </div>
           )}
           {kind === "lessons" && (
             <div className="edusmart:grid edusmart:grid-cols-2 edusmart:gap-4">
@@ -278,9 +332,32 @@ export function ToolPage({ kind }: { kind: Tool }) {
                   />
                 </Field>
               </div>
+              <div className="edusmart:col-span-2">
+                <Field label="Сэдэв">
+                  <input
+                    className={field}
+                    maxLength={300}
+                    value={topic}
+                    placeholder="Жишээ: Ньютоны хуулиуд"
+                    onChange={(event) => setTopic(event.target.value)}
+                  />
+                </Field>
+              </div>
+              <div className="edusmart:col-span-2">
+                <Field label="Нэмэлт заавар">
+                  <textarea
+                    className={field}
+                    rows={3}
+                    maxLength={4000}
+                    value={instructions}
+                    placeholder="Заах арга, сурагчдын хэрэгцээ, дасгалын чиглэл…"
+                    onChange={(event) => setInstructions(event.target.value)}
+                  />
+                </Field>
+              </div>
             </div>
           )}
-          {kind !== "ocr" && (
+          {kind === "voice" && (
             <Field label={meta.input}>
               <textarea
                 className={field}
@@ -292,13 +369,28 @@ export function ToolPage({ kind }: { kind: Tool }) {
               />
             </Field>
           )}
+          {(kind === "voice" || kind === "lessons") && (
+            <label className="edusmart:flex edusmart:items-start edusmart:gap-2 edusmart:text-xs edusmart:text-muted-foreground">
+              <input
+                type="checkbox"
+                checked={consent}
+                onChange={(event) => setConsent(event.target.checked)}
+              />
+              {kind === "voice"
+                ? "Оруулсан текст, бичлэгийг AI үйлчилгээнд илгээхийг зөвшөөрч байна. Зөвшөөрөлгүй хувийн мэдээлэл оруулахгүй."
+                : "Энэ формын мэдээллийг тохируулсан AI үйлчилгээнд илгээхийг зөвшөөрч байна. Сурагчийн хувийн мэдээлэл оруулахгүй."}
+            </label>
+          )}
           <button
             className={`${button} edusmart:bg-primary edusmart:text-primary-foreground`}
             disabled={
               busy ||
               recording.recording ||
-              (kind === "ocr" ? !file : !text.trim()) ||
-              (kind === "lessons" && (!subject.trim() || duration < 10 || duration > 180))
+              (kind === "ocr" ? !file : kind === "lessons" ? !topic.trim() : !text.trim()) ||
+              (kind === "lessons" &&
+                (!topic.trim() || !subject.trim() || duration < 10 || duration > 180)) ||
+              ((kind === "voice" || kind === "lessons") && !consent) ||
+              (kind === "voice" && (!teacher.trim() || !className.trim() || !date))
             }
             onClick={() => void run()}
           >
@@ -473,7 +565,7 @@ export function ToolPage({ kind }: { kind: Tool }) {
                   }
                 >
                   <IconDownload size={16} />
-                  {kind === "ocr" ? "Excel (CSV) татах" : "Текст татах"}
+                  {kind === "ocr" ? "Excel-д нээх CSV татах" : "Текст татах"}
                 </button>
                 {slides.length > 0 && (
                   <>
